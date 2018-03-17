@@ -13,7 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE 5000
+#define MAX_SQ 5000
+#define MAX_LINE 100
 
 //#define DEBUG
 
@@ -36,9 +37,9 @@ int main(int argc, char *argv[])
   // Open infile to load sequences 
   FILE *infp = fopen(in_file, "r");
   // Open outfile
-  FILE *outfp = fopen(out_file, "w");
+  FILE *outfp = fopen(out_file, "w+");
   t_len=0;
-  while (fgets(temp_buf, MAX_LINE, infp) != NULL)
+  while (fgets(temp_buf,MAX_LINE,infp) != NULL)
     {
       // check if line is a properties line (strating with '>')
       if(temp_buf[0] == '>')
@@ -48,15 +49,23 @@ int main(int argc, char *argv[])
       ln_len = strlen(temp_buf) - 1;
       t_len += ln_len;
 
-      printf("lnlen %ld\n",ln_len);
       fwrite(temp_buf, 1, ln_len, outfp);
+      //strncpy(sq_buffer, temp_buf, ln_len);
+      //fprintf(outfp,"%s",sq_buffer);
     } // End While
 
+  char * all_seq = (char *) malloc (t_len + 1);
+  rewind(outfp);
+  fgets(all_seq, t_len+1, outfp);
+  fclose(outfp);
+  outfp = fopen(out_file, "w");
+  fprintf(outfp, "%ld\n", t_len);
+  fwrite(all_seq, 1, t_len+1, outfp);
   //print a new line at the end of file
   fprintf(outfp,"\n");
   fclose(infp);
   fclose(outfp);
-
+  free(all_seq);
   printf("total size of the super seq: %ld\n", t_len);
   
   return 0;
