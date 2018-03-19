@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   FILE *infp = fopen(in_file, "r");
   // Open outfile
   FILE *outfp = fopen(out_file, "w");
-  t_len=0;
+  t_len = 0;
   while (fgets(temp_buf, MAX_LINE, infp) != NULL)
     {
       // check if line is a properties line (strating with '>')
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
       ln_len = strlen(temp_buf) - 1;
       t_len += ln_len;
 
-      printf("lnlen %ld\n",ln_len);
+      //printf("lnlen %ld\n",ln_len);
       fwrite(temp_buf, 1, ln_len, outfp);
     } // End While
 
