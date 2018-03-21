@@ -19,7 +19,7 @@
 #include <sys/time.h>
 
 #define MAX_SQ 5000
-#define MAX_LINE 100
+#define MAX_LINE 1000
 
 //#define DEBUG
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   
   // create vector
   // using (8-bits)characters to keep the frequency of the histogram
-  size_t max_ent = pow(4, k_mers);
+  unsigned long max_ent = pow(4, k_mers);
   unsigned short* histogram = (unsigned short*) calloc (max_ent, sizeof(unsigned short));
   if(histogram == NULL)
     {
@@ -66,6 +66,11 @@ int main(int argc, char *argv[])
   
   /* Open file to load a sequence */
   FILE *infp = fopen(in_file, "r");
+  if (infp == NULL)
+    {
+      fprintf(stderr, "Error opening in file\n");
+      exit(1);
+    }
   int n_seq = 0;
   
   while (fgets(temp_buf,MAX_LINE,infp) != NULL)
@@ -133,6 +138,11 @@ int main(int argc, char *argv[])
   
   // create an output file
   FILE *outfp = fopen(out_file, "w");
+  if (outfp == NULL)
+    {
+      fprintf(stderr, "Error opening in file\n");
+      exit(1);
+    }
   char fq;
   for (i = 0; i < max_ent; i++)
     {
