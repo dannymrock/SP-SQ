@@ -9,7 +9,8 @@
  *     - http://petewarden.typepad.com/
  *     - https://github.com/petewarden/c_hashmap
  *
- *   Compile: gcc -Wall -o histo-hash histo-hash1.c hashmap.o -lm
+ *   Compile: gcc -Wall -c hashmap.c
+ *            gcc -Wall -o histo-hash histo-hash.c hashmap.o -lm
  *   Use:  ./histo-hash Bancomini.dat 31 out.dat
  *  
  *   \Author: Danny Múnera - Parallel Programing UdeA 
@@ -68,6 +69,11 @@ int main(int argc, char *argv[])
   // Data structure for sequences
   int all_sq_sz = MAX_SQ;
   char** all_sq = (char **) malloc(all_sq_sz * sizeof(char*));
+  if(all_sq == NULL)
+    {
+      fprintf(stderr, "Calloc error while assigning memory to seq array\n");
+      exit(1);
+    }
   
   /* Open file to load a sequence */
   FILE *infp = fopen(in_file, "r");
@@ -84,11 +90,21 @@ int main(int argc, char *argv[])
 	      printf("Sequence %d of size %ld is %s \n", n_seq, sq_len, sq_buffer);
 #             endif
 	      all_sq[n_seq - 1] = (char*) malloc ((sq_len + 1)*sizeof(char));
+	      if(all_sq[n_seq - 1] == NULL)
+		{
+		  fprintf(stderr, "Malloc error while assigning memory to sq char\n");
+		  exit(1);
+		}
 	      strcpy(all_sq[n_seq - 1], sq_buffer);
 	      if ( n_seq % MAX_SQ == 0)
 		{
 		  all_sq_sz += MAX_SQ;
 		  all_sq = realloc(all_sq,(all_sq_sz*sizeof(char*)));
+		  if(all_sq == NULL)
+		    {
+		      fprintf(stderr, "Realloc error while re-assigning memory to sq array\n");
+		      exit(1);
+		    }
 		}		   		
 	    }
 	  strcpy(sq_buffer,"");

@@ -49,10 +49,20 @@ int main(int argc, char *argv[])
   // using (8-bits)characters to keep the frequency of the histogram
   size_t max_ent = pow(4, k_mers);
   unsigned short* histogram = (unsigned short*) calloc (max_ent, sizeof(unsigned short));
+  if(histogram == NULL)
+    {
+      fprintf(stderr, "Calloc error while assigning memory to vector\n");
+      exit(1);
+    }
 
   // Data structure for sequences
   int all_sq_sz = MAX_SQ;
   char** all_sq = (char **) malloc(all_sq_sz * sizeof(char*));
+  if(all_sq == NULL)
+    {
+      fprintf(stderr, "Malloc error while assigning memory to seq array\n");
+      exit(1);
+    }
   
   /* Open file to load a sequence */
   FILE *infp = fopen(in_file, "r");
@@ -69,11 +79,21 @@ int main(int argc, char *argv[])
 	      printf("Sequence %d of size %ld is %s \n", n_seq, sq_len, sq_buffer);
 #             endif
 	      all_sq[n_seq - 1] = (char*) malloc ((sq_len + 1)*sizeof(char));
+	      if(all_sq[n_seq - 1] == NULL)
+		{
+		  fprintf(stderr, "Malloc error while assigning memory to char array\n");
+		  exit(1);
+		}
 	      strcpy(all_sq[n_seq - 1], sq_buffer);
 	      if ( n_seq % MAX_SQ == 0)
 		{
 		  all_sq_sz += MAX_SQ;
 		  all_sq = realloc(all_sq,(all_sq_sz*sizeof(char*)));
+		  if(all_sq == NULL)
+		    {
+		      fprintf(stderr, "Realloc error while re-assigning memory to vector\n");
+		      exit(1);
+		    }
 		}		   		
 	    }
 	  strcpy(sq_buffer,"");
