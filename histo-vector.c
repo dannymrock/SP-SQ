@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
       fprintf(stderr, "ERROR - usage: histo <file> k_mers <outfile>\n");
       exit(1);
     }
-  char in_file[20];
-  char out_file[20];
+  char in_file[200];
+  char out_file[200];
   int k_mers;
   char sq_buffer[MAX_SQ], temp_buf[MAX_LINE];
   size_t sq_len, ln_len, i;
@@ -147,6 +147,7 @@ int main(int argc, char *argv[])
 void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram)
 {
   int i, j, sq_len;
+  unsigned long in;
   for(i = 0; i < sq_num; i++)
     {
       sq_len = strlen(all[i]);
@@ -155,7 +156,7 @@ void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* hist
 	{
 	  memcpy(sub_sq, &all[i][j], k_mers);
 	  sub_sq[k_mers] = '\0';
-	  size_t in = get_index(sub_sq, k_mers);
+	  in = get_index(sub_sq, k_mers);
 	  histogram[in]++;
 #     ifdef DEBUG
 	  printf("sub sq %s , index = 0x%.8lX \n",sub_sq, in);
@@ -165,9 +166,9 @@ void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* hist
 }
 
 
-size_t get_index(char* sq, size_t sz)
+unsigned long get_index(char* sq, size_t sz)
 {
-  size_t i, index = 0;
+  unsigned long i, index = 0;
   for(i = 0; i < sz; i++)
     {
       // compare string from last position to first

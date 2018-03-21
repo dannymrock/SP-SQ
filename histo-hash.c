@@ -26,7 +26,7 @@
 #include "hashmap.h"
 
 #define MAX_SQ 5000
-#define MAX_LINE 100
+#define MAX_LINE 1000
 
 #define KEY_MAX_LENGTH (256)
 #define KEY_COUNT (1024*1024)
@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
       fprintf(stderr, "ERROR - usage: histo <file> k_mers <outfile>\n");
       exit(1);
     }
-  char in_file[20];
-  char out_file[20];
+  char in_file[200];
+  char out_file[200];
   int k_mers;
   char sq_buffer[MAX_SQ], temp_buf[MAX_LINE];
   size_t sq_len, ln_len;
