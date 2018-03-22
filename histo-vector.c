@@ -25,6 +25,7 @@
 
 void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram);
 size_t get_index(char* sq, size_t sz);
+void get_char(char* sq, size_t sz, unsigned int index);
   
 int main(int argc, char *argv[])
 {
@@ -135,6 +136,14 @@ int main(int argc, char *argv[])
   elapsedTime = (t2.tv_sec - t1.tv_sec) * 1000.0;      // sec to ms
   elapsedTime += (t2.tv_usec - t1.tv_usec) / 1000.0;   // us to ms}
   printf("Processing time: %5.3f ms\n", elapsedTime);
+
+  //Free data structure
+   for(i = 0; i < n_seq; i++)
+     {
+      free(all_sq[i]);
+    }
+   free(all_sq);
+
   
   // create an output file
   FILE *outfp = fopen(out_file, "w");
@@ -143,13 +152,19 @@ int main(int argc, char *argv[])
       fprintf(stderr, "Error opening in file\n");
       exit(1);
     }
-  char fq;
-  for (i = 0; i < max_ent; i++)
+  unsigned short fq;
+  char buff[100];
+  unsigned long index;
+  for (index = 0; index < max_ent; index++)
     {
-      if((fq = histogram[i])!=0)
-	fprintf(outfp,"0x%.8lX\t%hu\n", i, fq);
+      if((fq = histogram[index])!=0)
+	{
+	  get_char(buff, k_mers, index);
+	  fprintf(outfp,"%s\t%hu\n", buff, fq);
+	}	  
     }
   fclose(outfp);
+  
   free(histogram);
   return 0;
 }
@@ -201,4 +216,39 @@ unsigned long get_index(char* sq, size_t sz)
       }
     }
   return index;  
+}
+
+void get_char(char* sq, size_t sz, unsigned int index)
+{
+  unsigned long mask, masked, value;
+  size_t i;
+  size_t in;
+  for(i = 0; i < sz; i++)
+    {
+      mask = 3 << (i*2);
+      masked = index & mask;
+      value = masked >> (i*2);
+      in = sz - 1 - i;
+      switch (value) {
+      case 0: 
+	sq[in] = 'A';  
+	break;
+      case 1:
+	sq[in] = 'C';  
+	break;
+      case 2: 
+	sq[in] = 'G';
+	break;
+      case 3: 
+	sq[in] = 'T';
+	break;
+      default:
+	sq[in] = 'N';
+	break;
+      }
+    }
+  sq[sz] = '\0';
+# ifdef DEBUG
+  printf("index = 0x%.8X -> sq %s \n", index, sq);
+# endif
 }
