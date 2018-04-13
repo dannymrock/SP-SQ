@@ -25,7 +25,7 @@
 
 void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram);
 void get_index(char* sq, size_t sz, long long * index);
-void get_char(char* sq, size_t sz, unsigned long index);
+void get_char(char* sq, size_t sz, long long index);
   
 int main(int argc, char *argv[])
 {
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   
   // create vector
   // using (8-bits)characters to keep the frequency of the histogram
-  unsigned long max_ent = pow(4, k_mers);
+  long long max_ent = pow(4, k_mers);
   unsigned short* histogram = (unsigned short*) calloc (max_ent, sizeof(unsigned short));
   if(histogram == NULL)
     {
@@ -153,8 +153,8 @@ int main(int argc, char *argv[])
     }
   unsigned short fq;
   char buff[100];
-  unsigned long index;
-  for (index = 0; index < max_ent; index++)
+  long long index;
+  for (index = 0LL; index < max_ent; index++)
     {
       if((fq = histogram[index])!=0)
 	{
@@ -219,14 +219,13 @@ void get_index(char* sq, size_t sz, long long *index)
     }
 }
 
-void get_char(char* sq, size_t sz, unsigned long index)
+void get_char(char* sq, size_t sz, long long index)
 {
-  unsigned long mask, masked, value;
-  size_t i;
-  size_t in;
+  long long mask, masked, value;
+  long long i, in;
   for(i = 0; i < sz; i++)
     {
-      mask = 3 << (i*2);
+      mask = 3LL << (i*2LL);
       masked = index & mask;
       value = masked >> (i*2);
       in = sz - 1 - i;
