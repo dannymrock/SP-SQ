@@ -24,8 +24,8 @@
 //#define DEBUG
 
 void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram);
-size_t get_index(char* sq, size_t sz);
-void get_char(char* sq, size_t sz, unsigned int index);
+void get_index(char* sq, size_t sz, long long * index);
+void get_char(char* sq, size_t sz, unsigned long index);
   
 int main(int argc, char *argv[])
 {
@@ -42,11 +42,10 @@ int main(int argc, char *argv[])
   struct timeval t1, t2;
   double elapsedTime;  
 
-  printf("trace 1\n");
   strcpy(in_file, argv[1]);
   k_mers = strtol(argv[2], NULL, 10);
   strcpy(out_file, argv[3]);
-  printf("trace 2\n");
+  
   // create vector
   // using (8-bits)characters to keep the frequency of the histogram
   unsigned long max_ent = pow(4, k_mers);
@@ -74,7 +73,6 @@ int main(int argc, char *argv[])
       exit(1);
     }
   int n_seq = 0;
-  
   while (fgets(temp_buf,MAX_LINE,infp) != NULL)
     {
       // check if line is a properties line (strating with '>')
@@ -116,7 +114,7 @@ int main(int argc, char *argv[])
       //sq_len = strlen(sq_buffer);
 
     } // End While
-  
+
       // save last sequence
 # ifdef DEBUG  
   printf("Sequence %d of size %ld is %s \n", n_seq, sq_len, sq_buffer);
@@ -173,7 +171,7 @@ int main(int argc, char *argv[])
 void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram)
 {
   int i, j, sq_len;
-  unsigned long in;
+  long long in;
   for(i = 0; i < sq_num; i++)
     {
       sq_len = strlen(all[i]);
@@ -182,19 +180,22 @@ void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* hist
 	{
 	  memcpy(sub_sq, &all[i][j], k_mers);
 	  sub_sq[k_mers] = '\0';
-	  in = get_index(sub_sq, k_mers);
-	  histogram[in]++;
+	  get_index(sub_sq, k_mers, &in);
+	  
+	  histogram[in]++; // = *(histogram+in) + 1;
+	  
 #     ifdef DEBUG
 	  printf("sub sq %s , index = 0x%.8lX \n",sub_sq, in);
 #     endif
-	} 
+	}
     } 
 }
 
 
-unsigned long get_index(char* sq, size_t sz)
+void get_index(char* sq, size_t sz, long long *index)
 {
-  unsigned long i, index = 0;
+  long long i;
+  *index = 0LL;
   for(i = 0; i < sz; i++)
     {
       // compare string from last position to first
@@ -204,22 +205,21 @@ unsigned long get_index(char* sq, size_t sz)
 	//index += 0;   
 	break;
       case 'C':
-	index += 1 << 2 * i;   
+	*index += 1LL << 2LL * i;   
 	break;
       case 'G': 
-	index += 2 << 2 * i;      
+	*index += 2LL << 2LL * i;      
 	break;
       case 'T': 
-	index += 3 << 2 * i;
+	*index += 3LL << 2LL * i;
 	break;
       default:
 	break;
       }
     }
-  return index;  
 }
 
-void get_char(char* sq, size_t sz, unsigned int index)
+void get_char(char* sq, size_t sz, unsigned long index)
 {
   unsigned long mask, masked, value;
   size_t i;
