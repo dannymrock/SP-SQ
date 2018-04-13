@@ -41,11 +41,12 @@ int main(int argc, char *argv[])
   size_t sq_len, ln_len, i;
   struct timeval t1, t2;
   double elapsedTime;  
-  
+
+  printf("trace 1\n");
   strcpy(in_file, argv[1]);
   k_mers = strtol(argv[2], NULL, 10);
   strcpy(out_file, argv[3]);
-  
+  printf("trace 2\n");
   // create vector
   // using (8-bits)characters to keep the frequency of the histogram
   unsigned long max_ent = pow(4, k_mers);
