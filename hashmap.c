@@ -8,7 +8,7 @@
 #include <string.h>
 
 #define INITIAL_SIZE (256)
-#define MAX_CHAIN_LENGTH (8)
+#define MAX_CHAIN_LENGTH (32)
 
 /* We need to keep keys and values */
 typedef struct _hashmap_element{
@@ -226,7 +226,7 @@ int hashmap_rehash(map_t in){
 	/* Setup the new elements */
 	hashmap_map *m = (hashmap_map *) in;
 	hashmap_element* temp = (hashmap_element *)
-		calloc(2 * m->table_size, sizeof(hashmap_element));
+		calloc(1.2 * m->table_size, sizeof(hashmap_element));
 	if(!temp) return MAP_OMEM;
 
 	/* Update the array */
@@ -235,7 +235,7 @@ int hashmap_rehash(map_t in){
 
 	/* Update the size */
 	old_size = m->table_size;
-	m->table_size = 2 * m->table_size;
+	m->table_size = 1.2 * m->table_size;
 	m->size = 0;
 
 	/* Rehash the elements */
