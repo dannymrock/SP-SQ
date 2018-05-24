@@ -23,7 +23,7 @@
 
 //#define DEBUG
 
-void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram);
+void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned int* histogram);
 void get_index(char* sq, size_t sz, long long * index);
 void get_char(char* sq, size_t sz, long long index);
   
@@ -49,7 +49,8 @@ int main(int argc, char *argv[])
   // create vector
   // using (8-bits)characters to keep the frequency of the histogram
   long long max_ent = pow(4, k_mers);
-  unsigned short* histogram = (unsigned short*) calloc (max_ent, sizeof(unsigned short));
+  unsigned int* histogram = (unsigned int*) calloc (max_ent,
+						    sizeof(unsigned int));
   if(histogram == NULL)
     {
       fprintf(stderr, "Calloc error while assigning memory to vector\n");
@@ -151,7 +152,7 @@ int main(int argc, char *argv[])
       fprintf(stderr, "Error opening in file\n");
       exit(1);
     }
-  unsigned short fq;
+  unsigned int fq;
   char buff[100];
   long long index;
   for (index = 0LL; index < max_ent; index++)
@@ -159,7 +160,7 @@ int main(int argc, char *argv[])
       if((fq = histogram[index])!=0)
 	{
 	  get_char(buff, k_mers, index);
-	  fprintf(outfp,"%s\t%hu\n", buff, fq);
+	  fprintf(outfp,"%s %10u\n", buff, fq);
 	}	  
     }
   fclose(outfp);
@@ -168,7 +169,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void process_all_sq (char** all, size_t sq_num, int k_mers, unsigned short* histogram)
+void process_all_sq (char** all, size_t sq_num, int k_mers,
+		     unsigned int* histogram)
 {
   int i, j, sq_len;
   long long in;
